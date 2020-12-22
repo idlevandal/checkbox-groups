@@ -15,8 +15,8 @@ interface Check {
 })
 export class AppComponent {
 
-  public groups = {};
-  public groupSelectAll = {};
+  public groups: {[key: string]: Array<Check>} = {};
+  public groupSelectAll: {[key: string]: boolean} = {};
 
   public myArr: Array<Check> = [
     {group: 'group1', name: 'Dave', age: 53},
@@ -52,6 +52,9 @@ export class AppComponent {
         this.groups[el.group] = [el];
       }
     });
+
+    console.log(this.groupSelectAll);
+    
   }
 
   public toggleCheckboxSelected(index: number, group: string): void {
