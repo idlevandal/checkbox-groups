@@ -1,8 +1,10 @@
 //@ts-check
 import { Component, OnInit } from '@angular/core';
+import { pipe } from 'rxjs';
+import {take} from 'rxjs/operators';
 import { DataService } from './data.service';
 
-interface Check {
+export interface Check {
   group: string;
   name: string;
   age: number;
@@ -23,8 +25,14 @@ export class AppComponent implements OnInit {
   constructor(private dataService: DataService) {}
 
   public ngOnInit(): void {
-    this.myArr = this.dataService.getData();
-    this.addChecked();
+    this.dataService.getData()
+      .pipe(
+        take(1)
+      )
+      .subscribe((res: any) => {
+        this.myArr = res;
+        this.addChecked();
+      });
   }
 
   // toggle all checkboxes in a group
