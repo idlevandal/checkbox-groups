@@ -1,5 +1,6 @@
 //@ts-check
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
 
 interface Check {
   group: string;
@@ -13,31 +14,38 @@ interface Check {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   public groups: {[key: string]: Array<Check>} = {};
   public groupSelectAll: {[key: string]: boolean} = {};
+  public myArr: Array<Check>;
 
-  public myArr: Array<Check> = [
-    {group: 'group1', name: 'Dave', age: 53},
-    {group: 'group3', name: 'Jane', age: 31},
-    {group: 'group1', name: 'Bill', age: 22},
-    {group: 'group2', name: 'Graham', age: 53},
-    {group: 'group2', name: 'Max', age: 19},
-    {group: 'group3', name: 'Joe', age: 22},
-    {group: 'group2', name: 'Brian', age: 73},
-    {group: 'group1', name: 'Jim', age: 73},
-    {group: 'group1', name: 'Zoe', age: 31},
-    {group: 'group3', name: 'Zack', age: 73},
-    {group: 'group2', name: 'Mary', age: 22},
-    {group: 'group2', name: 'Jill', age: 31},
-    {group: 'group3', name: 'John', age: 53},
-  ]
+  constructor(private dataService: DataService) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
+    this.myArr = this.dataService.getData();
     this.addChecked();
   }
 
+  // toggle all checkboxes in a group
+  public toggleAllSelected(group: string): void {
+    this.groupSelectAll[group] = !this.groupSelectAll[group];
+
+    this.groups[group].forEach((el, i) => {
+      this.groups[group][i]['isChecked'] = this.groupSelectAll[group];
+    });
+  }
+
+  // toggle individual checkboxes
+  public toggleCheckboxSelected(index: number, group: string): void {
+    this.groups[group][index].isChecked = !this.groups[group][index].isChecked;
+
+    this.groupSelectAll[group] = this.checkIfAllSelected(group);
+  }
+
+  // PRIVATE FUNCTIONS
+
+  // add checked to object. Create hash maps
   private addChecked(): void {
     this.myArr.forEach((el, i) => {
       this.myArr[i]['isChecked'] = false;
@@ -52,25 +60,9 @@ export class AppComponent {
         this.groups[el.group] = [el];
       }
     });
-
-    console.log(this.groupSelectAll);
-    
   }
 
-  public toggleCheckboxSelected(index: number, group: string): void {
-    this.groups[group][index].isChecked = !this.groups[group][index].isChecked;
-
-    this.groupSelectAll[group] = this.checkIfAllSelected(group);
-  }
-
-  public toggleAllSelected(group: string): void {
-    this.groupSelectAll[group] = !this.groupSelectAll[group];
-
-    this.groups[group].forEach((el, i) => {
-      this.groups[group][i]['isChecked'] = this.groupSelectAll[group];
-    });
-  }
-
+  // check if all checkboxes in a group are selected
   private checkIfAllSelected(group: string): boolean {
     for (let el of this.groups[group]) {
       if (!el.isChecked) {
