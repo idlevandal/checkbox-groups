@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
       .pipe(
         take(1)
       )
-      .subscribe((res: any) => {
+      .subscribe((res: Array<Check>) => {
         this.myArr = res;
         this.addChecked();
       });

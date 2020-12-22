@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Check } from './app.component';
 
 @Injectable({
@@ -9,7 +9,7 @@ export class DataService {
 
   constructor() { }
 
-  public getData() {
+  public getData(): Observable<Check[]> {
     return of([
       {group: 'group1', name: 'Dave', age: 53},
       {group: 'group3', name: 'Jane', age: 31},
